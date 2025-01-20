@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Header
+from app.storage import storage
 
 router = APIRouter()
 
-files_db = {}  # Temporary in-memory storage for files
+files_db = {}  # In-memory storage for files
 
 @router.get("/")
 async def list_files(auth: str = Header(...)) -> dict:
@@ -59,6 +60,6 @@ def validate_auth(token: str) -> str:
     """
     Validate the session token and return the associated username.
     """
-    if token not in sessions_db:
+    if token not in storage.sessions_db:
         raise HTTPException(status_code=401, detail="Invalid session token")
-    return sessions_db[token]
+    return storage.sessions_db[token]

@@ -1,15 +1,20 @@
-FROM tiangolo/uvicorn-gunicorn:python3.10 AS carlemany-backend-base
+# Usar una imagen base oficial de Python
+FROM python:3.10-slim
 
-RUN pip install --upgrade pip
+# Establecer el directorio de trabajo dentro del contenedor
+WORKDIR /app
 
-COPY requirements/base.txt /tmp/requirements/
+# Copiar el archivo requirements.txt
+COPY requirements.txt .
 
-RUN pip install -r /tmp/requirements/base.txt
+# Instalar las dependencias
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN mkdir /backend-backend
+# Copiar el resto del código fuente al contenedor
+COPY . .
 
-WORKDIR /carlemany-backend
+# Exponer el puerto 8000 para el servicio FastAPI
+EXPOSE 8000
 
-COPY . ./
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--log-level", "error", "--lifespan", "on"]
+# Comando para ejecutar la aplicación
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
